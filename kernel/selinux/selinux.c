@@ -26,7 +26,9 @@ static int transive_to_domain(const char *domain)
 	}
 
 	error = security_secctx_to_secid(domain, strlen(domain), &sid);
-	pr_info("error: %d, sid: %d\n", error, sid);
+	if (error) {
+		pr_info("security_secctx_to_secid %s -> sid: %d, error: %d\n", domain, sid, error);
+	}
 	if (!error) {
 		if (!ksu_sid)
 			ksu_sid = sid;
@@ -42,7 +44,7 @@ static int transive_to_domain(const char *domain)
 void setup_selinux(const char *domain)
 {
 	if (transive_to_domain(domain)) {
-		pr_err("transive domain failed.");
+		pr_err("transive domain failed.\n");
 		return;
 	}
 
